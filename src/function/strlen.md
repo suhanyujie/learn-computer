@@ -1,3 +1,6 @@
+## 一些疑惑
+* strlen 函数的实现为什么在PHP源码中找不到？
+
 ## 函数strlen的实现
 * strlen没有找到相关源码实现，但是找到了 `mb_strlen`
 * 不过通过 `mb_strlen` 的实现，可以知道 `strlen` 的实现
