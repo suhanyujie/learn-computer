@@ -14,3 +14,8 @@
 #### 宏
 * 对于大部分的重要的任务，Zend使用预定义的宏，是非常方便的，下面的表格和图描述了大部分基本的功能，结构体和宏
 * 
+
+
+
+## 参考
+* http://php.net/manual/zh/internals2.ze1.zendapi.php
