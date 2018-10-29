@@ -31,6 +31,134 @@ systemctl stop firewalld
     >OPTIONS='--selinux-enabled=false --insecure-registry grc.io'
     
     * `Kubernetes apiserver` 配置文件为 `/etc/kubernetes/apiserver` ，把 `--admission_control` 参数中的 `ServiceAccount` 删除
+* 按顺序启动服务：
+>systemctl start etcd   <br>
+systemctl start docker <br>
+systemctl start kube-apiserver  <br>
+systemctl start kube-controller-manager <br>
+systemctl start kube-scheduler <br>
+systemctl start kubelet <br>
+systemctl start kube-proxy <br>
+
+* 此时可以直接编辑为一个shell文件 `startKube.sh`:
+```shell
+systemctl start etcd
+systemctl start docker
+systemctl start kube-apiserver
+systemctl start kube-controller-manager
+systemctl start kube-scheduler
+systemctl start kubelet
+systemctl start kube-proxy
+```
+
+* 先为MySQL服务创建一个RC定义文件：mysql-rc.yaml
+
+```html
+apiserver: v1
+kind: ReplicationController
+metadata:
+    name: mysql
+spec:
+    replicas: 1
+    selector:
+        app: mysql
+    template:
+        metadata:
+            labels:
+                app: mysql
+        spec:
+            containers:
+                - name: mysql
+                image: mysql
+                ports:
+                    - containerPort: 3306
+                env:
+                    - name: MYSQL_ROOT_PASSWORD
+                    value: "123456"
+```
+
+* 编辑好文件以后，启动：`kubectl create -f mysql-rc.yaml`
+* 查看：`kubectl get rc`
+* `kubectl get pods`
+* 创建文件 `mysql-svc.yaml`
+
+```html
+apiVersion: v1
+kind: Service
+metadata:
+    name: mysql
+spec:
+    ports:
+        - port: 3306
+    selector:
+        app: mysql
+```
+
+* 文件编辑好之后，创建service：`kubectl create -f mysql-svc.yaml`
+* 查看service：`kubectl get svc`
+
+```shell
+[root@localhost kubernetes]# kubectl get svc
+ NAME         CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+ kubernetes   10.254.0.1     <none>        443/TCP    6h
+ mysql        10.254.80.26   <none>        3306/TCP   47s
+```
+
+* 此时，可以看到mysql对应的service有一个cluster ip，这是一个虚拟地址，由Kubenetes系统自动分配
+
+### 1.3.3 启动web应用
+* 创建文件 myweb-rc.yaml
+
+```html
+kind: ReplicationController
+metadata:
+    name: myweb
+spec:
+    replicas: 3
+    selector:
+        app: myweb
+    template:
+        metadata:
+            labels:
+                app: myweb
+        spec:
+            containers:
+                - name: myweb
+                  image: Kubeguide/tomcat-app:v1
+                  ports:
+                    - containerPort: 8080
+                  env:
+                    - name: MYSQL_SERVICE_HOST
+                      value: "mysql"
+                    - name: MYSQL_SERVICE_PORT
+                      value: '3306'
+```
+
+* 创建好Pods之后，再创建对应的Service，配置文件myweb-svc.yaml：
+
+```html
+apiVersion: v1
+kind: Service
+metadata:
+    name: myweb
+spec:
+    type: NodePort
+    ports:
+        - port: 8080
+          nodePort: 30001
+    selector:
+        app: myweb
+```
+
+## 遇到的问题
+### docker无法启动问题，提示Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+* 编辑配置文件 vi /etc/sysconfig/docker
+
+### pod服务一直处于ContainerCreating状态
+
+
+
+
 
 
  
