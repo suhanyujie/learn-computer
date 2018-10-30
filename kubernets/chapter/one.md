@@ -150,6 +150,19 @@ spec:
         app: myweb
 ```
 
+## 1.4 Kubernetes基本概念和术语
+* 诸如Node、Pod、Replication Controller、Service等可以看做一种资源对象
+* 我们可以通过Kubernetes提供的api对这些对象进行增、删、改、查操作，并将其保存在etcd中持久化存储
+* 因此，他其实是一种高度自动化的资源控制系统
+
+### 1.4.1 Master
+* Kubernetes API Server(kube-apiserver)，它提供了HTTP Rest接口的关键服务进程，是资源CURD的唯一入口，也是集群Cluster的入口进程
+* Kubernetes Controller Manager (kube-controller-manager)，Kubernetes里所有的资源对象的自动化控制中心
+* Kubernetes Scheduler (kube-scheduler)，负责资源调度（Pod调度）的进程，相当于公交公司的"调度室"
+
+
+
+
 ## 遇到的问题
 ### docker无法启动问题，提示Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
 * 编辑配置文件 vi /etc/sysconfig/docker
