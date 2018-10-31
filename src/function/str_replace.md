@@ -331,4 +331,97 @@ static zend_long php_str_replace_in_subject(zval *search, zval *replace, zval *s
 >ZVAL_STR_COPY(z, s): 将s拷贝到z的value,s类型为zend_string*,同ZVAL_STR(z, s),这里会增加s的refcount <br>
 链接地址是 https://www.kancloud.cn/huqinlou/php_internals_extended_development/428883
 
+* 通过上方的 `php_str_replace_in_subject` 的源代码 `ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(search), search_entry)`，当search和replace参数都是数组时，会遍历其中的每个单元，逐个进行替换。
+* 在这个循环体内，针对每个searchEntry，将其处理成字符串（zend_string指针类型），此时再处理replace参数，根据search参数的索引search_idx，<br> 
+取出replace对应索引search_idx上的值，如果 replace 对应索引 search_idx 上的值不存在，则将此时的 replaceEntry 视为空字符串
+* 那么此时，searchEntry 和 replaceEntry 都已经准备就绪了，判断一下 searchEntry 的长度
+* 如果长度为1，调用如下函数：
+    
+```html
+tmp_result = php_char_to_str_ex(Z_STR_P(result),
+            ZSTR_VAL(search_str)[0],
+            replace_value,
+            replace_len,
+            case_sensitivity,
+            &replace_count);
+```
+
+* 其中的参数 `Z_STR_P(result)` ，是待替换的字符串，`replace_value` 是替换的目标字符串
+* 现在，我们锁定了 `php_char_to_str_ex` 函数。它的实际实现如下：
+
+```html
+/* {{{ php_char_to_str_ex
+ */
+static zend_string* php_char_to_str_ex(zend_string *str, char from, char *to, size_t to_len, int case_sensitivity, zend_long *replace_count)
+{
+	zend_string *result;
+	size_t char_count = 0;
+	char lc_from = 0;
+	char *source, *target, *source_end= ZSTR_VAL(str) + ZSTR_LEN(str);
+
+	if (case_sensitivity) {
+		char *p = ZSTR_VAL(str), *e = p + ZSTR_LEN(str);
+		//计算需要替换几次。
+		//memchr的作用是：从 p 所指内存区域的前 (e - p) 个字节查找字符 from。当第一次遇到字符from时停止查找，
+		//如果成功，返回指向字符from的指针；否则返回NULL
+		while ((p = memchr(p, from, (e - p)))) {
+			char_count++;
+			p++;
+		}
+	} else {
+		lc_from = tolower(from);
+		for (source = ZSTR_VAL(str); source < source_end; source++) {
+			if (tolower(*source) == lc_from) {
+				char_count++;
+			}
+		}
+	}
+
+	if (char_count == 0) {
+		return zend_string_copy(str);
+	}
+
+	if (to_len > 0) {
+		result = zend_string_safe_alloc(char_count, to_len - 1, ZSTR_LEN(str), 0);
+	} else {
+		result = zend_string_alloc(ZSTR_LEN(str) - char_count, 0);
+	}
+	target = ZSTR_VAL(result);
+
+	if (case_sensitivity) {
+		char *p = ZSTR_VAL(str), *e = p + ZSTR_LEN(str), *s = ZSTR_VAL(str);
+		while ((p = memchr(p, from, (e - p)))) {
+			memcpy(target, s, (p - s));
+			target += p - s;
+			memcpy(target, to, to_len);
+			target += to_len;
+			p++;
+			s = p;
+			if (replace_count) {
+				*replace_count += 1;
+			}
+		}
+		if (s < e) {
+			memcpy(target, s, (e - s));
+			target += e - s;
+		}
+	} else {
+		for (source = ZSTR_VAL(str); source < source_end; source++) {
+			if (tolower(*source) == lc_from) {
+				if (replace_count) {
+					*replace_count += 1;
+				}
+				memcpy(target, to, to_len);
+				target += to_len;
+			} else {
+				*target = *source;
+				target++;
+			}
+		}
+	}
+	*target = 0;
+	return result;
+}
+/* }}} */
+```
 
