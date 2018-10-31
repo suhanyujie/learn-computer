@@ -425,3 +425,5 @@ static zend_string* php_char_to_str_ex(zend_string *str, char from, char *to, si
 /* }}} */
 ```
 
+* c语言的一些函数可以[]查看这儿](http://www.kuqin.com/clib/)
+
