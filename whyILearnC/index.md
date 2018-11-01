@@ -1,5 +1,6 @@
 # 一个大佬的分享笔记why i learn c
 * 作者的[github地址](https://github.com/wrestle)
+* [c语言基本语法](http://www.runoob.com/cprogramming/c-basic-syntax.html)参考
 
 ## 1
 * 谴责 `void main()` 的写法
@@ -23,6 +24,8 @@
 * 指针变量的递增问题：前缀递增总是在原数上进行递增操作，然而后缀递增呢？它首先拷贝一份原数 放于别处，并且递增这份拷贝，在原数进行的操作完毕后，将这份拷贝再拷贝 进原数取代它。
 例如：`int i=0;int* p = &i;p++;++p;`，这里`p++;` 和 `++p;` 的效果是不一样的。
 * `volatile` 是一种不常用的关键字，它的作用和 `const` 相反，使用它可能会拖慢你的程序
+
+
 
 
 

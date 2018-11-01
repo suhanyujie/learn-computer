@@ -393,6 +393,7 @@ static zend_string* php_char_to_str_ex(zend_string *str, char from, char *to, si
 		while ((p = memchr(p, from, (e - p)))) {
 			memcpy(target, s, (p - s));
 			target += p - s;
+			//这里，"extern void *memcpy(void *dest, void *src, unsigned int count);"，它的作用是：由src所指内存区域复制count个字节到dest所指内存区域。
 			memcpy(target, to, to_len);
 			target += to_len;
 			p++;
@@ -426,4 +427,14 @@ static zend_string* php_char_to_str_ex(zend_string *str, char from, char *to, si
 ```
 
 * c语言的一些函数可以[]查看这儿](http://www.kuqin.com/clib/)
+* 我们可以看到其中有一行 `while ((p = memchr(p, from, (e - p))))`，这里的 `(e - p)` ，是表示的是两个指针相减
+说实话，像我这种对c半熟不懂的人，看到这，真的是一头雾水，通过百度，指针相减的意义如下：
+>指针变量p1减p2的意义为：<br>
+如果是正值，则表示在内存中p1比p2靠后<br>
+如果是负值，则表示在内存中p1比p2靠前<br>
+结果的数字表示， 两个地址在内存中间隔多少个指针类型的字节倍数<br>
+
+
+
+
 
