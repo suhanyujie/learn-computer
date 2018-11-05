@@ -4,7 +4,6 @@
 * 解压文件unpv13e.tar.gz
 * 通过阅读README，可以知道如何对代码进行编译：
 ```html
-
 QUICK AND DIRTY
  ===============
  
@@ -32,3 +31,6 @@ QUICK AND DIRTY
 * 可是在执行时，因为一些运行环境的原因，难免遇到报错
 * 我是按照这篇文章进行解决的 `https://www.cnblogs.com/52php/p/5684487.html`
 
+## 创建TCP套接字
+* 使用套接字的api：`socket(AF_INET,SOCK_STREAM,0);`，它返回的实际上是一个小整数描述符，之后的所有函数调用就使用该描述符来标识这个套接字
+* TCP套接字就是TCP端点
