@@ -34,3 +34,14 @@ QUICK AND DIRTY
 ## 创建TCP套接字
 * 使用套接字的api：`socket(AF_INET,SOCK_STREAM,0);`，它返回的实际上是一个小整数描述符，之后的所有函数调用就使用该描述符来标识这个套接字
 * TCP套接字就是TCP端点
+* 作者提到，使用memset时，要格外的小心，TCPv3一书中，这个函数在10处出现错误。
+* 我们最好是重新定义一下，如：
+
+```c
+#define	bzero(ptr,n)		memset(ptr, 0, n)
+```
+
+* 套接口描述字其实是指sockfd，也就是使用时，fd的值
+* `sizeof(servaddr)` 这个写法的作用，是让编译器计算 `servaddr` 结构体的长度
+* TCP 是一个没有记录边界的字节流协议
+
