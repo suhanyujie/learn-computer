@@ -30,6 +30,7 @@ QUICK AND DIRTY
      
 * 可是在执行时，因为一些运行环境的原因，难免遇到报错
 * 我是按照这篇文章进行解决的 `https://www.cnblogs.com/52php/p/5684487.html`
+* Mac下，单独编译某个文件，从Makefile文件中可以看出，使用命令 `gcc -I../lib -g -O2 -D_REENTRANT -Wall -o daytimetcpsrv daytimetcpsrv.o ../libunp.a -lresolv -lpthread`
 
 ## 创建TCP套接字
 * 使用套接字的api：`socket(AF_INET,SOCK_STREAM,0);`，它返回的实际上是一个小整数描述符，之后的所有函数调用就使用该描述符来标识这个套接字
