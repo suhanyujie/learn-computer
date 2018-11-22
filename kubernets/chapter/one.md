@@ -160,19 +160,15 @@ spec:
 * Kubernetes Controller Manager (kube-controller-manager)，Kubernetes里所有的资源对象的自动化控制中心
 * Kubernetes Scheduler (kube-scheduler)，负责资源调度（Pod调度）的进程，相当于公交公司的"调度室"
 
-
-
-
 ## 遇到的问题
 ### docker无法启动问题，提示Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
 * 编辑配置文件 vi /etc/sysconfig/docker
 
 ### pod服务一直处于ContainerCreating状态
+* 查看 pods 的状态：`kubectl get pods`
+* 使用 `kubectl describe pod {NAME}` 命令查看 `pod` 详情，如`kubectl describe pod myweb-mbsqm`
 
 
 
 
-
-
- 
 
