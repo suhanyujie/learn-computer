@@ -228,7 +228,7 @@ Hint: Some lines were ellipsized, use -l to show in full.
 ## 参考资料
 * 单独卸载rpm软件 https://blog.csdn.net/assassinsshadow/article/details/72868494
 * 解决ContainerCreating https://blog.csdn.net/gezilan/article/details/80011905
-
+* 一些kubectl的命令  https://blog.csdn.net/xingyuzhe/article/details/80611365
 
 
 
