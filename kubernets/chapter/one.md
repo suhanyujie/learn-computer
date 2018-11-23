@@ -140,10 +140,8 @@ spec:
                   ports:
                     - containerPort: 8080
                   env:
-                    - name: MYSQL_SERVICE_HOST
-                      value: "mysql"
-                    - name: MYSQL_SERVICE_PORT
-                      value: '3306'
+                    - {name: MYSQL_SERVICE_HOST,value: "mysql"}
+                    - {name: MYSQL_SERVICE_PORT,value: '3306'}
 ```
 
 * 创建RC：`kubectl create -f myweb-rc.yaml`
@@ -221,6 +219,11 @@ Hint: Some lines were ellipsized, use -l to show in full.
 * 算了，还是把文件拿回来吧，`cp /etc/docker/seccomp.json.bak /etc/docker/seccomp.json`
 * 此时可以启动：`sudo service docker start`
 * 此时再执行 `docker pull registry.access.redhat.com/rhel7/pod-infrastructure:latest`
+* 此时查看pods状态，发现已变为Running
+* 通过命令可以查看端口的使用情况：`netstat -lntp`、`netstat -nltpux`
+* 浏览器访问 机器ip:port，但是访问不通，提示 ERR_CONNECTION_REFUSED
+* 查看其它开发者的搭建例子，使用：`iptables -P FORWARD ACCEPT`，得到解决
+
 
 
 
@@ -229,6 +232,7 @@ Hint: Some lines were ellipsized, use -l to show in full.
 * 单独卸载rpm软件 https://blog.csdn.net/assassinsshadow/article/details/72868494
 * 解决ContainerCreating https://blog.csdn.net/gezilan/article/details/80011905
 * 一些kubectl的命令  https://blog.csdn.net/xingyuzhe/article/details/80611365
+* 浏览器访问不通解决 https://www.jianshu.com/p/ca4de9f10daf
 
 
 
