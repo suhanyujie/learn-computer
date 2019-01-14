@@ -1,7 +1,10 @@
 # learn-php-extention
 * 不只是php扩展学习，还包括了《计算机网络》、《Kubernetes权威指南》、《why i learn c》、《Unix网络编程》等书籍的笔记
 
-## PHP源码分析 
+## PHP
+* 开发PHP扩展可以参考这2个网站的资料：
+* https://phpinternals.net/docs
+* http://www.phpinternalsbook.com/php7/extensions_design/php_functions.html 
 * 所有的源码分析和学习是基于 `PHP 7.2.8` 版本
 
 ### 一些全局说明
@@ -14,7 +17,8 @@
 
 ##### 宏
 * 对于大部分的重要的任务，Zend使用预定义的宏，是非常方便的，下面的表格和图描述了大部分基本的功能，结构体和宏
-* 
+
+
 
 
 ## 参考
