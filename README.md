@@ -1,4 +1,4 @@
-# learn-php-extention
+# learn-computer
 * 不只是php扩展学习，还包括了《计算机网络》、《Kubernetes权威指南》、《why i learn c》、《Unix网络编程》等书籍的笔记
 
 ## PHP
