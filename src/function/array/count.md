@@ -232,6 +232,15 @@ public function count()
 }
 ```
 
+* 此时，运行PHP文件，显示结果：
+
+```other
+int(2)
+```
+
+* 综上，count 函数不经可以针对数组使用，而且可以针对对象进行使用，使用时，要实现 Countable 接口。
+* 当你 unset 掉一个数组单元时，再 count ，此时得到的结果也会是符合预期的，因为底层做了识别和处理。
+
 ## 参考资料
 * 参数的解析
     * https://segmentfault.com/a/1190000007575322
