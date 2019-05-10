@@ -1,5 +1,5 @@
 # count 函数源码分析
-* 本文首发于 
+* *本文[首发](https://github.com/suhanyujie/learn-computer/blob/master/src/function/array/count.md)于 https://github.com/suhanyujie/learn-computer/blob/master/src/function/array/count.md*
 * 基于PHP 7.3.3
 * 由于不了解PHP的源码，用工具搜索了半天 `count` ，这个关键字的结果太多，挨个看了一遍都没看到 count 实现位置。
 * 去百度了一下，通过其中实现体中的 php_count_recursive 关键字，才找到 count 的实现。
