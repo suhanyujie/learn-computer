@@ -75,7 +75,7 @@ ZEND_PARSE_PARAMETERS_START(1, 2)
 ZEND_PARSE_PARAMETERS_END();
 ```
 
-* 在旧版的PHP中，获取参数的写法是 `(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|l", &array, &mode) == FAILURE)` ,但在 7.3 的写法中，使用的是FAST ZPP方式，也就是 `ZEND_PARSE_PARAMETERS_*` 相关的宏
+* 在旧版的PHP中，获取参数的写法是 `(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|l", &array, &mode) == FAILURE)` ,但在 7.3 的写法中，使用的是 FAST ZPP 方式，也就是 `ZEND_PARSE_PARAMETERS_*` 相关的宏
 * 参数部分 `(1, 2)` ，第1个参数表示最少参数时的参数个数，这里的 `1` 表示调用 count 时，最少要有1个参数。第2个参数表示，参数最多时的参数个数，这里的 `2` 表示最多有2个参数。
 
 ## part 2 类型匹配
