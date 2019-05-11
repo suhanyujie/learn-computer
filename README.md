@@ -2,7 +2,7 @@
 * 不只是php扩展学习，还包括了《计算机网络》、《Kubernetes权威指南》、《why i learn c》、《Unix网络编程》等书籍的笔记
 
 ## index
-* [php函数源码分析](./src)
+* [ PHP 函数源码分析](./src)
 
 ## PHP
 * 开发PHP扩展可以参考这2个网站的资料：
@@ -20,9 +20,6 @@
 
 ##### 宏
 * 对于大部分的重要的任务，Zend使用预定义的宏，是非常方便的，下面的表格和图描述了大部分基本的功能，结构体和宏
-
-
-
 
 ## 参考
 * http://php.net/manual/zh/internals2.ze1.zendapi.php
