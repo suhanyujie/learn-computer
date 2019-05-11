@@ -2,7 +2,7 @@
 * 不只是php扩展学习，还包括了《计算机网络》、《Kubernetes权威指南》、《why i learn c》、《Unix网络编程》等书籍的笔记
 
 ## index
-* [php函数源码分析](./src/function)
+* [php函数源码分析](./src)
 
 ## PHP
 * 开发PHP扩展可以参考这2个网站的资料：
