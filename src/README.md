@@ -5,6 +5,7 @@
 ## 100个PHP常用函数源码解析
 > [*100个函数来源*](https://learnku.com/php/t/25799)
 
+* [substr](./function/string/substr.md)
 * [count](./function/array/count.md)
 * [is_array](./function/array/is_array.md)
 
