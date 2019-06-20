@@ -4,7 +4,18 @@
 ## index
 * [ PHP 函数源码分析](./src)
 
-## PHP
+## 100个PHP常用函数源码解析
+> [*100个函数来源*](https://learnku.com/php/t/25799)
+
+* [implode](./src/function/string/implode.md)
+* [str_replace](./src/function/str_replace.md)
+* [explode](./src/function/string/explode.md)
+* [in_array](./src/function/array/in_array.md)
+* [substr](./src/function/string/substr.md)
+* [count](./src/function/array/count.md)
+* [is_array](./src/function/array/is_array.md)
+
+## PHP 源码相关
 * 开发PHP扩展可以参考这2个网站的资料：
 * https://phpinternals.net/docs
 * http://www.phpinternalsbook.com/php7/extensions_design/php_functions.html 
