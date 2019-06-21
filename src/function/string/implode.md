@@ -62,7 +62,49 @@ if (arg2 == NULL) {
 ```
 
 ### 不传递 pieces 参数
+* 在不传递 pieces 参数的判断中，即 `arg2 == NULL`，主要是对参数的一些处理
+* 将 glue 初始化为空字符串，并将传进来的唯一的参数，赋值给 pieces 变量，接着就调用 `php_implode(glue, pieces, return_value);`
+
+### 十分关键的 php_implode
+* 无论有没有传递 pieces 参数，在处理好参数后，最终都会调用 PHPAPI 的相关函数 php_implode，可见，关键逻辑都是在这个函数中实现的，那么我们深入其中看一看它
+* 在调用 php_implode 时，出现了一个看起来没有被声明的变量 return_value。没错，它似乎就是凭空出现的
+* 通过谷歌搜索 `PHP源码中 return_value`，找到了[答案](http://demon.tw/programming/php-function-return_value.html)。
+* 原来，这个变量是伴随着宏 PHP_FUNCTION 而出现的，而此处 implode 的实现就是通过 `PHP_FUNCTION(implode)` 来声明的。而 PHP_FUNCTION 的定义是:
+
+```c
+#define PHP_FUNCTION			ZEND_FUNCTION
+// 对应的 ZEND_FUNCTION 定义如下
+#define ZEND_FUNCTION(name)				ZEND_NAMED_FUNCTION(ZEND_FN(name))
+// 对应的 ZEND_NAMED_FUNCTION 定义如下
+#define ZEND_NAMED_FUNCTION(name)		void ZEND_FASTCALL name(INTERNAL_FUNCTION_PARAMETERS)
+// 对应的 ZEND_FN 定义如下
+#define ZEND_FN(name) zif_##name
+// 对应的 ZEND_FASTCALL 定义如下
+# define ZEND_FASTCALL __attribute__((fastcall))
+```
+
+* （关于双井号，它起连接符的作用，可以[参考这里](http://www.php-internals.com/book/?p=chapt01/01-03-comm-code-in-php-src)了解）
+* 在被预处理后，它的样子类似于下方所示：
+
+```c
+void zif_implode(int ht, zval *return_value, zval **return_value_ptr, zval *this_ptr, int return_value_used TSRMLS_DC)
+```
+
+* 也就是说 return_value 是作为整个 implode 扩展函数定义的一个形参
+* 在 php_implode 的定义中，一开始，先定义了一些即将用到的变量，随后使用 `ALLOCA_FLAG(use_heap)` 进行标识，如果申请内存，则申请的是堆内存
+* 通过 `numelems = zend_hash_num_elements(Z_ARRVAL_P(pieces));` 获取 pieces 参数的单元数量，如果是空数组，则直接返回空字符串
+* 此处还有判断，如果数组单元数为 1，则直接将唯一的单元作为字符串返回。
+* 最后是处理多数组单元的情况，因为前面标识过，若申请内存则申请的是堆内存，堆内存相对于栈来讲，效率比较低，所以只在非用不可的情形下，才会申请堆内存，那此处的情形就是多单元数组的情况。
 * 
+
+
+## 参考资料
+* 深入理解 PHP 内核 http://www.php-internals.com/book/?p=chapt01/01-03-comm-code-in-php-src
+* http://www.phppan.com/2010/02/php-source-12-return_value/
+
+
+
+
 
 
 
