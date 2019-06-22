@@ -136,7 +136,7 @@ ptr++;
 * 循环结束后，ptr 就是指向这段内存的尾部的指针。
 * 然后，申请了一段内存：`str = zend_string_safe_alloc(numelems - 1, ZSTR_LEN(glue), len, 0);`，用于存放单元字符串总长度加上连接字符的总长度，即 `(n-1)glue + len`。因为 n 个数组单元，只需要 n-1 个 glue 字符串。然后，将这段内存的尾地址，赋值给 cptr，为什么要指向尾部呢？看下一部分，你就会明白了。
 * 接下来，需要循环取出存放在 ptr 中的字符。我们知道，ptr 此时是所处内存区域的尾部，为了能有序展示连接的字符串，源码中，是从后向前循环处理。这也就是为什么需要把 cptr 指向所在内存区域的尾部的原因。
-* 进入循环，先进行 `ptr--;`，然后针对 ptr->str 的判断 `if (EXPECTED(ptr->str))`，看了一下此处的 EXPECTED 的作用，可以[参考这里](https://blog.csdn.net/shuimuniao/article/details/8017971)。可以简单的将其理解一种汇编层面的优化，当实际执行的情况更偏向于当前条件下的分支而非 else 的分支时，就用 EXPECTED 宏将其包装起来：`EXPECTED(ptr->str)`。我敢说，当你调用 implode 传递的数组中都是数字而非字符串，那么这里的 EXPECTED 作用就会失效。
+* 进入循环，先进行 `ptr--;`，然后针对 ptr->str 的判断 `if (EXPECTED(ptr->str))`，看了一下此处的 EXPECTED 的作用，可以[参考这里](https://blog.csdn.net/GrubLinux/article/details/37543489)。可以简单的将其理解一种汇编层面的优化，当实际执行的情况更偏向于当前条件下的分支而非 else 的分支时，就用 EXPECTED 宏将其包装起来：`EXPECTED(ptr->str)`。我敢说，当你调用 implode 传递的数组中都是数字而非字符串，那么这里的 EXPECTED 作用就会失效。
 * 接下来的两行是比较核心的：
 
 ```c
