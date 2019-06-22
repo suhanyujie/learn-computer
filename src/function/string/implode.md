@@ -95,7 +95,43 @@ void zif_implode(int ht, zval *return_value, zval **return_value_ptr, zval *this
 * 通过 `numelems = zend_hash_num_elements(Z_ARRVAL_P(pieces));` 获取 pieces 参数的单元数量，如果是空数组，则直接返回空字符串
 * 此处还有判断，如果数组单元数为 1，则直接将唯一的单元作为字符串返回。
 * 最后是处理多数组单元的情况，因为前面标识过，若申请内存则申请的是堆内存，堆内存相对于栈来讲，效率比较低，所以只在非用不可的情形下，才会申请堆内存，那此处的情形就是多单元数组的情况。
-* 
+* 随后，针对 pieces 循环，获取其值进行拼接，在源码中的 foreach 循环是固定结构，如下：
+
+```c
+ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(zend_array), tmp) {
+    // ...
+} ZEND_HASH_FOREACH_END();
+```
+
+* 这种常用写法我觉得，在编写 PHP 扩展中是必不可少的吧。虽然我还没有编写过任何一个可用于生产环境的 PHP 扩展。但我正努力朝那个方向走呢！
+* 在循环内，对数组单元分为三类：
+    * 字符串
+    * 整形数据
+    * 其它
+* 事实上，在循环开始之前，源码中，先申请了一块内存，用于存放下面的结构体，并且个数恰好是 pieces 数组单元的个数。
+
+```c
+struct {
+    zend_string *str;
+    zend_long    lval;
+} *strings, *ptr;
+```
+
+* 可以看到，结构体成员包含 zend 字符串以及 zend 整形数据。这个结构体的出现，恰好是为了存放数组单元中的 zend 字符串/zend 整形数据。
+
+#### 字符串
+* 先假设，pieces 数组单元中，都是字符串类型，此时循环中执行的逻辑就是：
+
+```c
+// tmp 是循环中的单元值
+ptr->str = Z_STR_P(tmp);
+len += ZSTR_LEN(ptr->str);
+ptr->lval = 0;
+ptr++;
+```
+
+* 其中，tmp 是循环中的单元值。这段逻辑意味着，会将数组单元值
+
 
 
 ## 参考资料
