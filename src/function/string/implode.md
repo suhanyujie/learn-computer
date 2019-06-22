@@ -130,18 +130,38 @@ ptr->lval = 0;
 ptr++;
 ```
 
-* 其中，tmp 是循环中的单元值。这段逻辑意味着，会将数组单元值
+* 其中，tmp 是循环中的单元值。每经历一次循环，会将单元值放入结构体中，随后进行指针 +1 运算，指针就指向下一个结构体地址：
+* ![](./implodePic1.png)
+* 并且，在这期间，统计出了字符串的总长度 `len += ZSTR_LEN(ptr->str);`
+* 循环结束后，ptr 就是指向这段内存的尾部的指针。
+* 然后，申请了一段内存：`str = zend_string_safe_alloc(numelems - 1, ZSTR_LEN(glue), len, 0);`，用于存放单元字符串总长度加上连接字符的总长度，即 `(n-1)glue + len`。因为 n 个数组单元，只需要 n-1 个 glue 字符串。然后，将这段内存的尾地址，赋值给 cptr，为什么要指向尾部呢？看下一部分，你就会明白了。
+* 接下来，需要循环取出存放在 ptr 中的字符。我们知道，ptr 此时是所处内存区域的尾部，为了能有序展示连接的字符串，源码中，是从后向前循环处理。这也就是为什么需要把 cptr 指向所在内存区域的尾部的原因。
+* 进入循环，先进行 `ptr--;`，然后针对 ptr->str 的判断 `if (EXPECTED(ptr->str))`，看了一下此处的 EXPECTED 的作用，可以[参考这里](https://blog.csdn.net/shuimuniao/article/details/8017971)。可以简单的将其理解一种汇编层面的优化，当实际执行的情况更偏向于当前条件下的分支而非 else 的分支时，就用 EXPECTED 宏将其包装起来：`EXPECTED(ptr->str)`。我敢说，当你调用 implode 传递的数组中都是数字而非字符串，那么这里的 EXPECTED 作用就会失效。
+* 接下来的两行是比较核心的：
 
+```c
+cptr -= ZSTR_LEN(ptr->str);
+memcpy(cptr, ZSTR_VAL(ptr->str), ZSTR_LEN(ptr->str));
+```
 
+* cptr 的指针前移一个数组单元字符的长度，然后将 `ptr->str` （某数组单元的值）通过 c 标准库函数 memcpy 拷贝到 cptr 内存空间中。
+* 当 `ptr == strings` 满足时，意味着 ptr 不再有可被复制的字符串/数字。因为 strings 是 ptr 所在区域的首地址。
+* 通过上面，已经成功将一个数组单元的字符串拷贝到 cptr 对应的内存区域中，接下来如何处理 glue 呢？
+* 只需要像处理 `ptr->str` 一样处理 glue 即可。至少源码中是这么做的。
+* cptr 继续前移 glue 的长度，然后，将 glue 字符串拷贝到 cptr 对应的内存区域中。没错，还是用 memcpy 函数。
+* 到这里，第一次循环结束了。我应该不需要像实际循环中那样描述这里的循环吧？相信优秀的你,是完全可以参考上方的描述脑补出来的 ^^
+* 当然，处理返回的两句还是要提一下：
+
+```c
+free_alloca(strings, use_heap);
+RETURN_NEW_STR(str);
+```
+
+* strings 的那一片内存空间只是存储临时值的，因此函数结束了，就必须跟 strings 说再见。我们知道 c 语言是手动管理内存的，没有 GC，你要显示的释放内存，即 `free_alloca(strings, use_heap);`。
+* 在上面的描述中，我们只讲到了 cptr，但这里的返回值却是 str。
+* 不用怀疑，这里是对的，我们所讲的 cptr 那一片内存区域的首地址就是 str。
+* 至此，最终的结果已经返回。
 
 ## 参考资料
 * 深入理解 PHP 内核 http://www.php-internals.com/book/?p=chapt01/01-03-comm-code-in-php-src
 * http://www.phppan.com/2010/02/php-source-12-return_value/
-
-
-
-
-
-
-
-
