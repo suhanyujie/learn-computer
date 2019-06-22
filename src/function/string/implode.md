@@ -1,6 +1,7 @@
-# implode 函数源码分析
->*本文[首发](https://github.com/suhanyujie/learn-computer/blob/master/src/function/string/implode.md)于 https://github.com/suhanyujie/learn-computer/blob/master/src/function/string/implode.md* <br>
-基于PHP 7.3.3
+# PHP 源码 — implode 函数源码分析
+>* 本文[首发](https://github.com/suhanyujie/learn-computer/blob/master/src/function/string/implode.md)于 https://github.com/suhanyujie/learn-computer/blob/master/src/function/string/implode.md* 
+>* 作者：[suhanyujie](https://github.com/suhanyujie)
+>* 基于PHP 7.3.3
 
 ## PHP 中的 implode
 * 在 PHP 中，implode 的作用是：将一个一维数组的值转化为字符串。记住一维数组，如果是多维的，会发生什么呢？在本篇分析中，会有所探讨。
@@ -130,9 +131,32 @@ ptr->lval = 0;
 ptr++;
 ```
 
-* 其中，tmp 是循环中的单元值。每经历一次循环，会将单元值放入结构体中，随后进行指针 +1 运算，指针就指向下一个结构体地址：
+* 其中，tmp 是循环中的单元值。每经历一次循环，会将单元值放入结构体中，随后进行指针 +1 运算，指针就指向存储下一个结构体数据的地址：
 * ![](./implodePic1.png)
 * 并且，在这期间，统计出了字符串的总长度 `len += ZSTR_LEN(ptr->str);`
+
+#### 整数类型
+* 以上，讨论了数组单元中是字符串的情况。接下来看看，如果数组单元的类型是数值类型时会发生什么？
+* 判断一个变量是否是数值类型（其实是 zend_long），通用方法是：`Z_TYPE_P(tmp) == IS_LONG`。一旦知道当前的数据类型是 zend_long，则将其赋值给 ptr 的 lval 结构体成员。然后 ptr 指针后移一个单位长度。
+* 但是，我们知道我们不能像获取 zend_string 的长度一样去获取 zend_long 的字符长度。如果是 zend_string，则可以通过 `len += ZSTR_LEN(val);` 的方式获取其字符长度。对于 zend_long，有什么好的方法呢？
+* 在源码中是通过对 10 做除法运算，得出结果的一部分，再慢慢的累加其长度：
+
+```c
+while (val) {
+    val /= 10;
+    len++;
+}
+```
+
+* 如果是负数呢？没有什么特别的办法，直接判断处理：
+
+```c
+if (val <= 0) {
+    len++;
+}
+```
+
+### 字符串的处理和拷贝
 * 循环结束后，ptr 就是指向这段内存的尾部的指针。
 * 然后，申请了一段内存：`str = zend_string_safe_alloc(numelems - 1, ZSTR_LEN(glue), len, 0);`，用于存放单元字符串总长度加上连接字符的总长度，即 `(n-1)glue + len`。因为 n 个数组单元，只需要 n-1 个 glue 字符串。然后，将这段内存的尾地址，赋值给 cptr，为什么要指向尾部呢？看下一部分，你就会明白了。
 * 接下来，需要循环取出存放在 ptr 中的字符。我们知道，ptr 此时是所处内存区域的尾部，为了能有序展示连接的字符串，源码中，是从后向前循环处理。这也就是为什么需要把 cptr 指向所在内存区域的尾部的原因。
