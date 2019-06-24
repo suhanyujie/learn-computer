@@ -186,6 +186,81 @@ RETURN_NEW_STR(str);
 * 不用怀疑，这里是对的，我们所讲的 cptr 那一片内存区域的首地址就是 str。
 * 至此，最终的结果已经返回。
 
+## 实践
+* 为了可能更加清晰 implode 源码中代码运行时的情况，接下来，我们通过 PHP 扩展的方式对其进行 debug。在这个过程中的代码，我都放在 [GitHub](https://github.com/suhanyujie/su_dd/tree/debug/implode) 的仓库中，分支名是 `debug/implode`，可自行下载运行，看看效果。
+* 新建 PHP 扩展模板的操作，可以[参考这里](https://github.com/suhanyujie/su_dd/blob/debug/implode/docs/prepare.md)。请确保操作完里面描述的步骤。
+* 接下来，主要针对 su_dd.c 文件修改代码。为了能通过修改代码来看效果，将 php_implode 函数复制到扩展文件中，并将其命名为 su_php_implode：
+
+```c
+static void su_php_implode(const zend_string *glue, zval *pieces, zval *return_value)
+{
+	// 源码内容省略
+}
+```
+
+* 在扩展中新增一个扩展函数 su_test：
+
+```c
+PHP_FUNCTION(su_test)
+{
+	zval tmp;
+	zend_string *str, *glue, *tmp_glue;
+	zval *arg1, *arg2 = NULL, *pieces;
+
+	ZEND_PARSE_PARAMETERS_START(1, 2)
+		Z_PARAM_ZVAL(arg1)
+		Z_PARAM_OPTIONAL
+		Z_PARAM_ZVAL(arg2)
+	ZEND_PARSE_PARAMETERS_END();
+	glue = zval_get_tmp_string(arg1, &tmp_glue);
+	pieces = arg2;
+	su_php_implode(glue, pieces, return_value);
+}
+```
+
+* 因为扩展的编译以及引入,前面的已经[提及](https://github.com/suhanyujie/su_dd/blob/debug/implode/docs/prepare.md)。因此，此时只需编写 PHP 代码进行调用：
+
+```php
+// t1.php
+$res = su_test('-', [
+	2019, '01', '01',
+]);
+var_dump($res);
+```
+
+* PHP 运行该脚本，输出：`string(10) "2019-01-01"`，这意味着，你已经成功编写了一个扩展函数。别急，这只是迈出了第一步，别忘记我们的目标：通过调试来学习 implode 源码。
+* 接下来，我们通过 gdb 工具，调试以上 PHP 代码在源码层面的运行。为了防止初学者不会用 gdb，这里就繁琐的写出这个过程。如果没有安装 gdb，请自行谷歌。
+* 先进入 PHP 脚本所在路径。命令行下:
+
+```bash
+gdb php
+b zval_get_tmp_string
+r t1.php
+```
+
+* `b` 即 break，表示打一个断点
+* `r` 即 run，表示运行脚本
+* `s` 即 step，表示一步一步调试，遇到方法调用，会进入方法内部单步调试
+* `n` 即 next，表示一行一行调试。遇到方法，则调试直接略过直接执行返回，调试不会进入其内部。 
+
+* 当运行完 `r t1.php`，则会定位到第一个断点对应的行，显示如下：
+
+```bash
+Breakpoint 1, zif_su_test (execute_data=0x7ffff1a1d0c0, 
+    return_value=0x7ffff1a1d090)
+    at /home/www/clang/php-7.3.3/ext/su_dd/su_dd.c:179
+179		glue = zval_get_tmp_string(arg1, &tmp_glue);
+```
+
+* 此时，按下 `n`，显示如下：
+
+```bash
+184		su_php_implode(glue, pieces, return_value);
+```
+
+
+
+
 ## 参考资料
 * 深入理解 PHP 内核 http://www.php-internals.com/book/?p=chapt01/01-03-comm-code-in-php-src
 * http://www.phppan.com/2010/02/php-source-12-return_value/
