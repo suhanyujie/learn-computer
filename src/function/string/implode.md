@@ -667,3 +667,4 @@ string(14) "2019-01-01-1-2"
 ## 参考资料
 * 深入理解 PHP 内核 http://www.php-internals.com/book/?p=chapt01/01-03-comm-code-in-php-src
 * http://www.phppan.com/2010/02/php-source-12-return_value/
+* https://github.com/pangudashu/php7-internal/blob/master/7/var.md
