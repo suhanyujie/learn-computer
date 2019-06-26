@@ -6,7 +6,7 @@
 * php 中的 [is_array](https://php.net/is_array)，它的签名是 `is_array ( mixed $var ) : bool`
 
 ## 实现的源码
-* 在 `\ext\standard\type.c` 中可以找到 `PHP_FUNCTION(is_array)` 所处的位置，大概位于 273 行。
+* 在 `\ext\standard\type.c` 中可以找到 `PHP_FUNCTION(is_array)` 所处的位置，大概位于 273 行。可以[点击链接](https://github.com/php/php-src/blob/9ebd7f36b1bcbb2b425ab8e903846f3339d6d566/ext/standard/type.c#L273)便于查看。
 * 在 PHP 中，这个系列的函数，是由很多个，除了它本身之外，还有 is_bool 、 is_countable 、 is_callback 、 is_int 、 is_object 、 is_string 等等
 * 在它们之中，大部分的源代码也都是和 is_array 的类似：
 
