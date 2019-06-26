@@ -34,7 +34,7 @@ string(20) "123,是一个number!"
 ```
 
 ## implode 源码实现
-* 通过搜索关键字 `PHP_FUNCTION(explode)` 可以找到，该函数定义于 `\ext\standard\string.c` 文件中的 [1288 行](https://github.com/php/php-src/blob/9ebd7f36b1bcbb2b425ab8e903846f3339d6d566/ext/standard/string.c#L1288)
+* 通过搜索关键字 `PHP_FUNCTION(implode)` 可以找到，该函数定义于 `\ext\standard\string.c` 文件中的 [1288 行](https://github.com/php/php-src/blob/9ebd7f36b1bcbb2b425ab8e903846f3339d6d566/ext/standard/string.c#L1288)
 * 一开始的几行是参数声明相关的信息。其中 *arg2 是用于接收 pieces 参数的指针。
 * 在下方对 arg2 的判断中，如果 arg2 为空，则表示没有传 pieces 对应的值
 
