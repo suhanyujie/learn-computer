@@ -98,7 +98,7 @@ struct _zval_struct {
 };
 ```
 
-* 不做深入介绍了。接续看 `php_is_type`
+* 不做深入介绍了。接续看 `php_is_type`，php_is_type 这个函数会被多种函数调用，例如：is_string、is_resource、is_object... 因此，它需要兼容各种情况。
 * 在判断类型时，有个地方比较蹊跷： `if (type == IS_RESOURCE) {`
 * 为何这里要判断是否是资源类型？
 
