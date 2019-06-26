@@ -241,9 +241,8 @@ r t1.php
 * `b` 即 break，表示打一个断点
 * `r` 即 run，表示运行脚本
 * `s` 即 step，表示一步一步调试，遇到方法调用，会进入方法内部单步调试
-* `n` 即 next，表示一行一行调试。遇到方法，则调试直接略过直接执行返回，调试不会进入其内部。 
+* `n` 即 next，表示一行一行调试。遇到方法，则调试直接略过直接执行返回，调试不会进入其内部。
 * `p` 即 print，表示打印当前作用域中的一个变量
-
 * 当运行完 `r t1.php`，则会定位到第一个断点对应的行，显示如下：
 
 ```bash
@@ -539,7 +538,7 @@ ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(pieces), tmp) {
         cptr = ZSTR_VAL(ptr->str);
         zend_string* str2 = origin_php_implode(glue, tmp, tmp_val);
         ptr->str = str2;
-        // 此时，要拿到 tmp_str 存储的字符串长度
+        // 此时，要拿到拼接后的字符串长度
         len += ZSTR_LEN(str2);
         ptr++;
     } else {

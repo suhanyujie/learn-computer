@@ -21,7 +21,18 @@ if (ZSTR_LEN(delim) == 0) {
 }
 ```
 
-* 
+### 申请内存
+#### 申请堆内存
+* 如果你在写扩展过程中，需要申请一个自定义结构体的存储空间，可以参考以下：
+
+```c
+struct {
+    zend_string *str;
+    zend_long    lval;
+} *strings, *ptr;
+ALLOCA_FLAG(use_heap)
+strings = do_alloca((sizeof(*strings)) * numelems, use_heap);
+```
 
 
 ## 其他
