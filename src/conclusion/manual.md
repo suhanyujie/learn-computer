@@ -30,6 +30,14 @@ ZSTR_LEN(delim);
 str = zend_string_safe_alloc(numelems, ZSTR_LEN(glue), len, 0);
 ```
 
+* 方法2 
+
+```c
+// 其中 var 是 char*；var_len 是字符长度
+retval = zend_string_init(var, var_len, 0);
+```
+
+
 ## 返回值相关
 * 返回 false `RETURN_FALSE`
 
