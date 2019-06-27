@@ -7,6 +7,7 @@
 ## 100个PHP常用函数源码解析
 > [*100个函数来源*](https://learnku.com/php/t/25799)
 
+* [strlen](./src/function/string/strlen.md)
 * [implode](./src/function/string/implode.md)
 * [str_replace](./src/function/str_replace.md)
 * [explode](./src/function/string/explode.md)
