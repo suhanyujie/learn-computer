@@ -126,7 +126,7 @@ const char *zend_rsrc_list_get_rsrc_type(zend_resource *res)
 
 * 也就是说，创建了一个资源类型R1时，就会向 `list_destructors` 中存入一份 zend_rsrc_list_dtors_entry ，其中包含了该资源R1的一些信息
 * 这里的 `zend_hash_index_find_ptr` 就是找到资源对应的 zend_rsrc_list_dtors_entry ，从而取其中的 `lde->type_name`
-* 如果 type 成员是存在的，则说明是资源类型。
+* 如果 type 成员是存在的，则说明是资源类型。也就是说，当你用 is_resource 函数判断资源时，会如此执行，type 成员存在，才回返回 true。
 
 ## 总结
 * PHP 中使用 `is_*` 系列判断类型的函数，大部分都是通过变量底层 zval 中的 `u1.v.type` 来判断类型值
