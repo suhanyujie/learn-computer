@@ -64,6 +64,7 @@ typedef union _zend_value {
 ### zend_array, _zend_array, HashTable
 
 ```c
+// typedef struct _zend_array HashTable;
 struct _zend_array {
 	zend_refcounted_h gc;
 	union {
