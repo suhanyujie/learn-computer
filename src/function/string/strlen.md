@@ -147,13 +147,7 @@ var_dump($res);
 const mbfl_encoding *
 mbfl_name2encoding(const char *name)
 {
-	const mbfl_encoding *encoding;
-	int i, j;
-
-	if (name == NULL) {
-		return NULL;
-	}
-
+	// ...
  	i = 0;
  	while ((encoding = mbfl_encoding_ptr_list[i++]) != NULL){
 		if (strcasecmp(encoding->name, name) == 0) {
@@ -193,8 +187,62 @@ mbfl_name2encoding(const char *name)
 * 定义的编码方式有很多种，位于目录 php-7.3.3/ext/mbstring/libmbfl/filters 下，有 63 个大类。这里的 3 个 while 循环，感觉效率低下。后面会将将其优化的实践作为练习。
 * 上面的 PHP 脚本中，在底层会寻找 GBK 对应的编码方式，其最终的结局是找到了对应的类型，它位于 `php-7.3.3/ext/mbstring/libmbfl/filters/mbfilter_cp936.c` 文件中，存在于 mbfl_encoding 类型的 aliases 数组中，其值的定义为：`static const char *mbfl_encoding_cp936_aliases[] = {"CP-936", "GBK", NULL};`
 * 寻找到对应的 encoding 之后，就是计算字符串的长度了：`n = mbfl_strlen(&string);`
+* 该函数中，通过预定义好的 mblen_table 来获取对应的字符长度，从而推算出字符串的总长度：
+
+```c
+else if (encoding->mblen_table != NULL) {
+    const unsigned char *mbtab = encoding->mblen_table;
+    n = 0;
+    p = string->val;
+    k = string->len;
+    /* count */
+    if (p != NULL) {
+        while (n < k) {
+            unsigned m = mbtab[*p];
+            n += m;
+            p += m;
+            len++;
+        }
+    }
+}
+```
+
+* 至此，字符串长度才算计算完成。
+
+## 实践
+* 前面提到过，使用 mb_strlen 的效率可能会因为寻找对应的字符编码方式而下降，那么这次的实践，就通过写扩展函数来优化 mb_strlen，并且我们优化的点就是前面提到的三段 while 循环。
+* 在这个扩展函数中，我们将通过一个 HashTable 来缓存编码名称到对应编码的映射。
+
+### 依赖其他扩展
+* 如果开发扩展函数时，你需要依赖其他的扩展，可以参考一下信海龙老师的[ php7 扩展开发之依赖其他扩展](https://www.bo56.com/php7%e6%89%a9%e5%b1%95%e5%bc%80%e5%8f%91%e4%b9%8b%e4%be%9d%e8%b5%96%e5%85%b6%e4%bb%96%e6%89%a9%e5%b1%95/)
+* zend_module_entry 的调整：
+
+```c
+// 调整前
+zend_module_entry s2_module_entry = {
+	STANDARD_MODULE_HEADER, 
+	"s2",					/* Extension name */
+	s2_functions,			/* zend_function_entry */
+	// ...
+};
+// 调整后
+static const  zend_module_dep s2_deps[] = {
+    ZEND_MOD_REQUIRED("mbstring")
+    ZEND_MOD_END
+};
+zend_module_entry s2_module_entry = {
+	STANDARD_MODULE_HEADER_EX, NULL,
+	s2_deps,
+	"s2",					/* Extension name */
+	s2_functions,			/* zend_function_entry */
+	// ...
+};
+```
 
 
+## 总结
+* 通过寻找 mbstring 扩展中的 GBK 编码方式，了解到 GBK 的别名是 CP936，因为分配给 GBK 编码集的页是第 936 页。
 
 
-
+## 参考资料
+* PHP7扩展开发之依赖其他扩展 https://blog.csdn.net/u013474436/article/details/79029538
