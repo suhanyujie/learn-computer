@@ -1,5 +1,5 @@
 # PHP 源码 — intval 函数源码分析
->* 本文[首发](https://github.com/suhanyujie/learn-computer/blob/master/src/function/array/array_merge.md)于 https://github.com/suhanyujie/learn-computer/blob/master/src/function/array/array_merge.md* 
+>* 文章来源： https://github.com/suhanyujie/learn-computer/
 >* 作者：[suhanyujie](https://github.com/suhanyujie)
 >* 基于PHP 7.3.3
 
