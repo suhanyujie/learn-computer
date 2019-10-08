@@ -6,3 +6,4 @@
 
 ## 参考资料
 * 书籍 《计算机程序的构造和解释》，如果有条件，请购买正版。
+* 源码可以参考 https://mitpress.mit.edu/sites/default/files/sicp
