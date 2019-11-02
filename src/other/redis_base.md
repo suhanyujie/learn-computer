@@ -8,3 +8,6 @@
 #### 集合 set
 * Redis 中集合的特性是：String 类型的无序集合。集合成员是唯一的，这就意味着集合中不能出现重复的数据。
 
+
+## 参考资料
+* https://www.runoob.com/redis/redis-sets.html
