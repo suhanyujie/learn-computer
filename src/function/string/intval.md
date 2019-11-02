@@ -242,7 +242,51 @@ while (*ptr == '0') {
 >* ZEND_IS_DIGIT 宏的实现是 `((c) >= '0' && (c) <= '9')`，位于 `'0'`和 `'9'` 之间的字符就是我们需要找的数字字符。
 
 #### 小数的情况
-* 如果在遍历字符串的字符时，遇到小数点该如何处理呢？个人观点看，由于我们要实现的是 `intval` 函数，所以我觉得遇到小数点时，可以将其当作非数字字符来处理。例如 `"3.14abc"` 字符串，intval 之后就直接是 3。然而实际上，PHP 底层的实现不是这样的，在遇到小数点时，有一些特殊处理：
+* `_is_numeric_string_ex` 函数在底层会被多种 PHP 函数调用，包括 `floatval`。如果在遍历字符串的字符时，遇到小数点该如何处理呢？个人观点看，由于我们要实现的是 `intval` 函数，所以我觉得遇到小数点时，可以将其当作非数字字符来处理。例如 `"3.14abc"` 字符串，intval 之后就直接是 3。然而实际上，`_is_numeric_string_ex` 的实现不是这样的，因为它是一个通用函数。在遇到小数点时，有一些特殊处理：
+* 在遇到小数点的情况下，c 会进行 goto 跳转，跳转到 `process_double`：
 
+```c
+process_double:
+    type = IS_DOUBLE;
 
-// 未完待续
+    /* If there's a dval, do the conversion; else continue checking
+     * the digits if we need to check for a full match */
+    if (dval) {
+        local_dval = zend_strtod(str, &ptr);
+    } else if (allow_errors != 1 && dp_or_e != -1) {
+        dp_or_e = (*ptr++ == '.') ? 1 : 2;
+        goto check_digits;
+    }
+```
+
+* `_is_numeric_string_ex` 函数最后会将得到的浮点数返回：
+
+```c
+if (dval) {
+    *dval = local_dval;
+}
+
+return IS_DOUBLE;
+```
+
+* 浮点数的值被赋给 `dval` 指针。并将数据标识 `IS_DOUBLE` 返回。
+* 随后执行栈跳转回函数 `_zval_get_long_func_ex` 继续执行，也就是 `return zend_dval_to_lval_cap(dval);`。该函数定义如下：
+
+```
+static zend_always_inline zend_long zend_dval_to_lval_cap(double d)
+{
+	if (UNEXPECTED(!zend_finite(d)) || UNEXPECTED(zend_isnan(d))) {
+		return 0;
+	} else if (!ZEND_DOUBLE_FITS_LONG(d)) {
+		return (d > 0 ? ZEND_LONG_MAX : ZEND_LONG_MIN);
+	}
+	return (zend_long)d;
+}
+```
+
+* 也就是说，从浮点数到整数，是底层进行了类型强制转换的结果：`(zend_long)d`。
+
+## 结语
+* PHP 底层将很多小段逻辑进行了封装，很大程度的提高了代码复用性。但也给源码的维护和学习带来了一些额外的成本。一个类型转换的函数就进行了 10 余种函数调用。
+* 下一篇，将进行 intval 底层相关的扩展实践。敬请期待。
+* 如果你有更好的想法，欢迎给我提意见和建议。
