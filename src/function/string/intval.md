@@ -1,4 +1,4 @@
-# PHP 源码 — intval 函数源码分析
+# PHP 源码 — intval 函数源码分析（算法：字符串转换为整形）
 >* 文章来源： https://github.com/suhanyujie/learn-computer/
 >* 作者：[suhanyujie](https://github.com/suhanyujie)
 >* 基于PHP 7.3.3
