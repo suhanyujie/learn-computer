@@ -4,6 +4,7 @@
 ## index
 * [ PHP 函数源码分析](./src)
 * 书籍 [计算机程序的构造和解释](./2019/计算机程序的构造和解释)
+* book [用 Rust 练习数据结构和算法](./2021/用-Rust-练习数据结构和算法)
 
 ## 100个PHP常用函数源码解析
 > [*100个函数来源*](https://learnku.com/php/t/25799)
@@ -21,7 +22,7 @@
 ## PHP 源码相关
 * 开发PHP扩展可以参考这2个网站的资料：
 * https://phpinternals.net/docs
-* http://www.phpinternalsbook.com/php7/extensions_design/php_functions.html 
+* http://www.phpinternalsbook.com/php7/extensions_design/php_functions.html
 * 所有的源码分析和学习是基于 `PHP 7.2.8` 版本
 
 ### 一些全局说明
