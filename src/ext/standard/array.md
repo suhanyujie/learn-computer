@@ -12,7 +12,7 @@
 * 函数原型：
 
 ```c/c++
-static int php_array_key_compare(const void *a, const void *b) /* {{{ */
+static int php_array_key_compare(const void *a, const void *b)
 {
 	Bucket *f = (Bucket *) a;
 	Bucket *s = (Bucket *) b;
@@ -51,7 +51,4 @@ static int php_array_key_compare(const void *a, const void *b) /* {{{ */
 	}
 	return l1 > l2 ? 1 : (l1 < l2 ? -1 : 0);
 }
-/* }}} */
 ```
-
-
