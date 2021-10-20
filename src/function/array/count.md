@@ -172,7 +172,7 @@ typedef struct _zend_object_handlers {
 
 ```php
 <?php
-class ThirdTypeA 
+class ThirdTypeA
 {
     public $data = [
         'merchantId'=>1,
@@ -223,7 +223,7 @@ interface Countable {
 }
 ```
 
-* 因而在 `implements Countable` 时，需要实现方法 count 
+* 因而在 `implements Countable` 时，需要实现方法 count
 
 ```php
 public function count()
@@ -238,7 +238,7 @@ public function count()
 int(2)
 ```
 
-* 综上，count 函数不经可以针对数组使用，而且可以针对对象进行使用，使用时，要实现 Countable 接口。
+* 综上，count 函数不仅可以针对数组使用，而且可以针对对象进行使用，使用时，要实现 Countable 接口。
 * 当你 unset 掉一个数组单元时，再 count ，此时得到的结果也会是符合预期的，因为底层做了识别和处理。
 
 ## 参考资料
@@ -246,7 +246,7 @@ int(2)
     * https://segmentfault.com/a/1190000007575322
     * https://www.jianshu.com/p/05616d23c0dc
     * https://wiki.php.net/rfc/fast_zpp#proposal
-* PHP内核文档 
+* PHP内核文档
     * https://phpinternals.net/docs/hash_flag_has_empty_ind
 * handler table
     * https://wiki.php.net/internals/engine/objects#the_handler_table
