@@ -94,7 +94,7 @@ static zend_always_inline int fast_is_identical_function(zval *op1, zval *op2)
 * 我们知道， `zend_is_identical` 函数的作用是比较 两个变量的值是否相等的，其源码如下：
 
 ```c
-ZEND_API int ZEND_FASTCALL zend_is_identical(zval *op1, zval *op2) /* {{{ */
+ZEND_API int ZEND_FASTCALL zend_is_identical(zval *op1, zval *op2)
 {
 	if (Z_TYPE_P(op1) != Z_TYPE_P(op2)) {
 		return 0;
@@ -154,7 +154,7 @@ static zend_always_inline zend_bool zend_string_equals(zend_string *s1, zend_str
 ```
 
 * 先判断是否是同一个地址，如果是，则返回 true ，表示相等
-* 如果指针不相等，则调用 zend_string_equal_content 判断字符串是否相等，而这个函数的底层逻辑是调用 
+* 如果指针不相等，则调用 zend_string_equal_content 判断字符串是否相等，而这个函数的底层逻辑是调用
 
 ```c
 !memcmp(ZSTR_VAL(s1), ZSTR_VAL(s2), ZSTR_LEN(s1));

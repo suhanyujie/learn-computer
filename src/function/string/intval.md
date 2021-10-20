@@ -110,7 +110,7 @@ static zend_always_inline zend_long zval_get_long(zval *op) {
 	return EXPECTED(Z_TYPE_P(op) == IS_LONG) ? Z_LVAL_P(op) : zval_get_long_func(op);
 }
 
-ZEND_API zend_long ZEND_FASTCALL zval_get_long_func(zval *op) /* {{{ */
+ZEND_API zend_long ZEND_FASTCALL zval_get_long_func(zval *op)
 {
 	return _zval_get_long_func_ex(op, 1);
 }

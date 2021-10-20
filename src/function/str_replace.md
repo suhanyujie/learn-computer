@@ -1,7 +1,7 @@
 ## PHP的函数 `str_replace`
 * 查看源码，位于 `/php7.2.7/ext/standard/string.c` ，如下：
 ```php
-/* {{{ php_str_replace_common
+/* php_str_replace_common
  */
 static void php_str_replace_common(INTERNAL_FUNCTION_PARAMETERS, int case_sensitivity)
 {
@@ -77,7 +77,7 @@ static void php_str_replace_common(INTERNAL_FUNCTION_PARAMETERS, int case_sensit
 * 到了这里，只是做一件事，想办法将变量转换为字符串：
 
 ```
-ZEND_API void ZEND_FASTCALL _convert_to_string(zval *op ZEND_FILE_LINE_DC) /* {{{ */
+ZEND_API void ZEND_FASTCALL _convert_to_string(zval *op ZEND_FILE_LINE_DC)
 {
 try_again:
 	switch (Z_TYPE_P(op)) {
@@ -152,7 +152,7 @@ case IS_ARRAY:
 * 其中，有一个关键的函数是 `php_str_replace_in_subject`，当replace参数和search参数都是数组时，会直接调用这个函数，其源码如下：
 
 ```c
-/* {{{ php_str_replace_in_subject
+/* php_str_replace_in_subject
  */
 static zend_long php_str_replace_in_subject(zval *search, zval *replace, zval *subject, zval *result, int case_sensitivity)
 {
@@ -308,7 +308,7 @@ static zend_long php_str_replace_in_subject(zval *search, zval *replace, zval *s
 	zend_string_release(subject_str);
 	return replace_count;
 }
-``` 
+```
 
 * 判断search是数组，`Z_TYPE_P(search) == IS_ARRAY`，接着调用了一个宏`ZVAL_STR_COPY`，它的定义如下：
 
@@ -332,11 +332,11 @@ static zend_long php_str_replace_in_subject(zval *search, zval *replace, zval *s
 链接地址是 https://www.kancloud.cn/huqinlou/php_internals_extended_development/428883
 
 * 通过上方的 `php_str_replace_in_subject` 的源代码 `ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(search), search_entry)`，当search和replace参数都是数组时，会遍历其中的每个单元，逐个进行替换。
-* 在这个循环体内，针对每个searchEntry，将其处理成字符串（zend_string指针类型），此时再处理replace参数，根据search参数的索引search_idx，<br> 
+* 在这个循环体内，针对每个searchEntry，将其处理成字符串（zend_string指针类型），此时再处理replace参数，根据search参数的索引search_idx，<br>
 取出replace对应索引search_idx上的值，如果 replace 对应索引 search_idx 上的值不存在，则将此时的 replaceEntry 视为空字符串
 * 那么此时，searchEntry 和 replaceEntry 都已经准备就绪了，判断一下 searchEntry 的长度
 * 如果长度为1，调用如下函数：
-    
+
 ```html
 tmp_result = php_char_to_str_ex(Z_STR_P(result),
             ZSTR_VAL(search_str)[0],
@@ -349,8 +349,8 @@ tmp_result = php_char_to_str_ex(Z_STR_P(result),
 * 其中的参数 `Z_STR_P(result)` ，是待替换的字符串，`replace_value` 是替换的目标字符串
 * 现在，我们锁定了 `php_char_to_str_ex` 函数。它的实际实现如下：
 
-```html
-/* {{{ php_char_to_str_ex
+```
+/* php_char_to_str_ex
  */
 static zend_string* php_char_to_str_ex(zend_string *str, char from, char *to, size_t to_len, int case_sensitivity, zend_long *replace_count)
 {
