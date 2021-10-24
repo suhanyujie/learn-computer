@@ -1,4 +1,4 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{borrow::BorrowMut, cell::RefCell, rc::Rc};
 
 // first, could not compile
 // struct Node {
@@ -56,6 +56,19 @@ impl TransactionLog {
             tail: None,
             length: 0,
         }
+    }
+
+    pub fn append(&mut self, value: String) {
+        let new = Node::new(value);
+
+        match self.tail.take() {
+            Some(old) => {
+               (*old).borrow_mut().next = Some(new.clone())
+            },
+            None => self.head = Some(new.clone())
+        };
+        self.length += 1;
+        self.tail = Some(new);
     }
 }
 
