@@ -1,3 +1,5 @@
+mod doubly_linked;
+
 use std::{borrow::BorrowMut, cell::RefCell, rc::Rc};
 
 // first, could not compile
