@@ -1,4 +1,4 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, rc::Rc, thread::current};
 
 
 /// 双链表节点
@@ -10,7 +10,7 @@ struct Node {
 
 type Link = Option<Rc<RefCell<Node>>>;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct BetterTransactionLog {
     head: Link,
     tail: Link,
@@ -42,6 +42,22 @@ impl Iterator for ListIterator {
                 current.next.clone()
             },
             None => None
+        };
+        result
+    }
+}
+
+impl DoubleEndedIterator for ListIterator {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        let current = &self.current;
+        let mut result = None;
+        self.current = match current {
+            Some(ref current) => {
+                let current = current.borrow();
+                result = Some(current.value.clone());
+                current.prev.clone()
+            },
+            None => None,
         };
         result
     }
