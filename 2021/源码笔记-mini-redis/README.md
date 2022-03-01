@@ -4,3 +4,4 @@
 
 ## ref
 * https://github.com/tokio-rs/mini-redis
+* Rust 实现的 redis server https://github.com/ikilobyte/fake-redis-rs
