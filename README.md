@@ -5,6 +5,7 @@
 * [ PHP 函数源码分析](/src)
 * 书籍 [计算机程序的构造和解释](/2019/计算机程序的构造和解释)
 * book [用 Rust 练习数据结构和算法](/2021/用-Rust-练习数据结构和算法)
+* [This Week In ARTS 系列](https://github.com/suhanyujie/learn-computer/issues?q=is%3Aopen+is%3Aissue+label%3AARTS)
 
 ## latest topic
 * redis 分布式锁  doing
